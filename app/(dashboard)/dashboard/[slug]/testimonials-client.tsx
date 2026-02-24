@@ -45,6 +45,7 @@ export function TestimonialsClient({
   const [testimonials, setTestimonials] = useState(initialTestimonials)
   const [tab, setTab] = useState<'pending' | 'approved'>('pending')
   const [showImport, setShowImport] = useState(false)
+  const [showCsvImport, setShowCsvImport] = useState(false)
   const [copied, setCopied] = useState(false)
 
   const pending = testimonials.filter(t => !t.approved)
@@ -95,6 +96,12 @@ export function TestimonialsClient({
           className="rounded-lg bg-indigo-500 px-3 py-1.5 text-sm font-medium text-white hover:bg-indigo-600"
         >
           Import
+        </button>
+        <button
+          onClick={() => setShowCsvImport(true)}
+          className="rounded-lg bg-indigo-500 px-3 py-1.5 text-sm font-medium text-white hover:bg-indigo-600"
+        >
+          Upload CSV
         </button>
       </div>
 
@@ -184,6 +191,13 @@ export function TestimonialsClient({
           productId={product.id}
           onClose={() => setShowImport(false)}
           onSaved={handleImportSaved}
+        />
+      )}
+
+      {showCsvImport && (
+        <CsvImportModal
+          productId={product.id}
+          onClose={() => setShowCsvImport(false)}
         />
       )}
     </div>
@@ -379,6 +393,111 @@ function ImportModal({
               </button>
             </div>
           </form>
+        )}
+      </div>
+    </div>
+  )
+}
+
+function CsvImportModal({
+  productId,
+  onClose,
+}: {
+  productId: string
+  onClose: () => void
+}) {
+  const [file, setFile] = useState<File | null>(null)
+  const [loading, setLoading] = useState(false)
+  const [result, setResult] = useState<{ imported: number; skipped: number } | null>(null)
+  const [error, setError] = useState('')
+
+  async function handleImport() {
+    if (!file) return
+    setLoading(true)
+    setError('')
+    try {
+      const formData = new FormData()
+      formData.append('file', file)
+      formData.append('product_id', productId)
+
+      const res = await fetch('/api/import/csv', {
+        method: 'POST',
+        body: formData,
+      })
+      const data = await res.json()
+      if (!res.ok) {
+        setError(data.error || 'Import failed')
+        setLoading(false)
+        return
+      }
+      setResult({ imported: data.imported, skipped: data.skipped })
+      setTimeout(() => {
+        window.location.reload()
+      }, 2000)
+    } catch {
+      setError('Import failed')
+    }
+    setLoading(false)
+  }
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4" onClick={onClose}>
+      <div className="w-full max-w-md rounded-xl bg-white p-6 shadow-lg" onClick={e => e.stopPropagation()}>
+        <div className="mb-4 flex items-center justify-between">
+          <h2 className="text-lg font-semibold text-gray-900">Import from CSV</h2>
+          <button onClick={onClose} className="text-gray-400 hover:text-gray-600">&times;</button>
+        </div>
+
+        {error && <div className="mb-4 rounded-lg bg-red-50 p-3 text-sm text-red-600">{error}</div>}
+        {result && (
+          <div className="mb-4 rounded-lg bg-green-50 p-3 text-sm text-green-700">
+            &#10003; {result.imported} testimonials imported{result.skipped > 0 ? `, ${result.skipped} skipped` : ''}
+          </div>
+        )}
+
+        {!result && (
+          <>
+            <p className="mb-3 text-sm text-gray-600">
+              CSV must have <span className="font-medium">name</span> and <span className="font-medium">text</span> columns. <span className="text-gray-400">role, company, avatar_url, source are optional.</span>
+            </p>
+
+            <a
+              href="/sample-testimonials.csv"
+              download
+              className="mb-4 inline-flex items-center gap-1 text-sm text-indigo-500 hover:text-indigo-600"
+            >
+              &darr; Download sample CSV
+            </a>
+
+            <div className="mb-4">
+              <label className="mb-1 block text-sm font-medium text-gray-700">CSV File</label>
+              <input
+                type="file"
+                accept=".csv"
+                onChange={e => setFile(e.target.files?.[0] || null)}
+                className="w-full text-sm text-gray-600 file:mr-3 file:rounded-lg file:border-0 file:bg-indigo-50 file:px-3 file:py-1.5 file:text-sm file:font-medium file:text-indigo-600 hover:file:bg-indigo-100"
+              />
+              {file && <p className="mt-1 text-xs text-gray-500">Selected: {file.name}</p>}
+            </div>
+
+            <div className="flex gap-2">
+              <button
+                type="button"
+                onClick={onClose}
+                className="flex-1 rounded-lg border border-gray-200 px-4 py-2 text-sm text-gray-600 hover:bg-gray-50"
+              >
+                Cancel
+              </button>
+              <button
+                type="button"
+                onClick={handleImport}
+                disabled={!file || loading}
+                className="flex-1 rounded-lg bg-indigo-500 px-4 py-2 text-sm font-medium text-white hover:bg-indigo-600 disabled:opacity-50"
+              >
+                {loading ? 'Importing...' : 'Import'}
+              </button>
+            </div>
+          </>
         )}
       </div>
     </div>
