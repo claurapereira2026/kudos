@@ -38,16 +38,22 @@ export async function GET() {
     var roleHtml = '';
     if (config.showRole !== false && (t.role || t.company)) {
       var parts = [t.role, t.company].filter(Boolean).join(' at ');
-      roleHtml = '<p style="font-size:12px;color:' + (config.mutedColor || '#6b7280') + ';margin:0;">' + parts + '</p>';
+      roleHtml = '<p style="font-size:12px;color:' + (config.mutedColor || '#9ca3af') + ';margin:0;">' + parts + '</p>';
     }
     var sourceHtml = '';
     if (config.showSource !== false) {
       sourceHtml = '<span style="display:inline-block;margin-top:8px;padding:2px 8px;border-radius:9999px;font-size:11px;font-weight:500;background:' + badge.bg + ';color:' + badge.color + ';">' + sourceLabel(t.source) + '</span>';
     }
-    return '<div style="background:' + (config.cardBg || '#ffffff') + ';color:' + (config.textColor || '#111827') + ';border-radius:' + (config.borderRadius || 12) + 'px;padding:16px;border:1px solid rgba(0,0,0,0.06);">'
+    var bodyFontSize = config.bodyFontSize === 'sm' ? '13px' : config.bodyFontSize === 'lg' ? '17px' : '15px';
+    var cardPadding = config.cardPadding === 'compact' ? '12px' : config.cardPadding === 'spacious' ? '32px' : '20px';
+    var shadowMap = { none: '', sm: '0 1px 3px rgba(0,0,0,0.1)', md: '0 4px 6px rgba(0,0,0,0.1), 0 2px 4px rgba(0,0,0,0.06)', lg: '0 10px 15px rgba(0,0,0,0.15), 0 4px 6px rgba(0,0,0,0.1)' };
+    var cardShadow = shadowMap[config.shadow] || '';
+    var cardBorder = config.showBorder !== false ? '1px solid ' + (config.cardBorderColor || '#e5e7eb') : 'none';
+    var nameColor = config.nameColor || config.textColor || '#111827';
+    return '<div style="background:' + (config.cardBg || '#ffffff') + ';color:' + (config.textColor || '#374151') + ';border-radius:' + (config.borderRadius || 12) + 'px;padding:' + cardPadding + ';border:' + cardBorder + ';box-shadow:' + cardShadow + ';">'
       + (avatarHtml ? '<div style="margin-bottom:8px;">' + avatarHtml + '</div>' : '')
-      + '<p style="font-size:14px;line-height:1.5;margin:0 0 8px 0;color:' + (config.textColor || '#111827') + ';">' + t.text + '</p>'
-      + '<p style="font-size:14px;font-weight:600;margin:0;color:' + (config.textColor || '#111827') + ';">' + t.name + '</p>'
+      + '<p style="font-size:' + bodyFontSize + ';line-height:1.5;margin:0 0 8px 0;color:' + (config.textColor || '#374151') + ';">' + t.text + '</p>'
+      + '<p style="font-size:14px;font-weight:600;margin:0;color:' + nameColor + ';">' + t.name + '</p>'
       + roleHtml
       + sourceHtml
       + '</div>';
@@ -55,13 +61,21 @@ export async function GET() {
 
   function renderWidget(testimonials, config) {
     var cols = config.columns || 3;
+    var gap = config.gap === 'sm' ? '8px' : config.gap === 'lg' ? '24px' : '16px';
+    var widgetBg = config.widgetBg || 'transparent';
+    var fontName = config.fontFamily && config.fontFamily !== 'System UI' ? config.fontFamily : null;
+    var fontFamily = fontName ? '"' + fontName + '", system-ui, sans-serif' : '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
+    var fontImport = fontName ? "@import url('https://fonts.googleapis.com/css2?family=" + fontName.replace(/ /g, '+') + ":wght@400;600&display=swap');" : '';
     var items = testimonials.slice(0, config.maxCount || 12);
     var cards = items.map(function(t) { return renderCard(t, config); }).join('');
     return '<style>'
-      + '.kudos-grid { display: grid; grid-template-columns: repeat(' + cols + ', 1fr); gap: 16px; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }'
+      + fontImport
+      + '.kudos-grid { display: grid; grid-template-columns: repeat(' + cols + ', 1fr); gap: ' + gap + '; font-family: ' + fontFamily + '; }'
       + '@media (max-width: 768px) { .kudos-grid { grid-template-columns: 1fr !important; } }'
       + '</style>'
-      + '<div class="kudos-grid">' + cards + '</div>';
+      + '<div style="background:' + widgetBg + ';">'
+      + '<div class="kudos-grid">' + cards + '</div>'
+      + '</div>';
   }
 
   function initWidget(el) {
