@@ -14,14 +14,17 @@ export function DashboardHeader({ email }: { email: string }) {
   }
 
   return (
-    <header className="border-b border-gray-100 bg-white">
+    <header className="border-b border-stone-100 bg-white">
       <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-3 sm:px-6">
-        <Link href="/dashboard" className="text-lg font-bold text-gray-900">Kudos</Link>
+        <Link href="/dashboard" className="flex items-center gap-1.5">
+          <span className='text-orange-500 font-bold text-xl leading-none'>&#10077;</span>
+          <span className='font-bold text-xl text-[#1a1a2e] tracking-tight'>Kudos</span>
+        </Link>
         <div className="flex items-center gap-4">
-          <span className="text-sm text-gray-500">{email}</span>
+          <span className="text-sm text-slate-400">{email}</span>
           <button
             onClick={handleSignOut}
-            className="rounded-lg border border-gray-200 px-3 py-1.5 text-sm text-gray-600 hover:bg-gray-50"
+            className="text-sm text-slate-500 hover:text-slate-700"
           >
             Sign out
           </button>

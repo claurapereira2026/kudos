@@ -37,18 +37,18 @@ export function FormClient({ productId, productName }: { productId: string; prod
 
   if (submitted) {
     return (
-      <div className="rounded-xl border border-gray-100 bg-white p-8 text-center shadow-sm">
-        <div className="mb-3 text-4xl">&#10003;</div>
-        <h2 className="text-lg font-semibold text-gray-900">Thank you!</h2>
-        <p className="mt-1 text-sm text-gray-500">
-          Your testimonial has been submitted for review.
+      <div className="rounded-2xl border border-stone-100 bg-white p-8 text-center shadow-sm">
+        <div className="mb-3 text-4xl">&#10022;</div>
+        <h2 className="text-lg font-semibold text-[#1a1a2e]">Thank you!</h2>
+        <p className="mt-1 text-sm text-slate-400">
+          Your testimonial has been submitted. We really appreciate you taking the time.
         </p>
       </div>
     )
   }
 
   return (
-    <form onSubmit={handleSubmit} className="rounded-xl border border-gray-100 bg-white p-6 shadow-sm">
+    <form onSubmit={handleSubmit} className="rounded-2xl border border-stone-100 bg-white p-6 shadow-sm">
       {error && (
         <div className="mb-4 rounded-lg bg-red-50 p-3 text-sm text-red-600">{error}</div>
       )}
@@ -60,7 +60,7 @@ export function FormClient({ productId, productName }: { productId: string; prod
           value={form.name}
           onChange={e => setForm(f => ({ ...f, name: e.target.value }))}
           required
-          className="w-full rounded-lg border border-gray-200 px-3 py-2 text-sm outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20"
+          className="w-full rounded-lg border border-stone-200 px-3 py-2 text-sm outline-none focus:border-orange-500 focus:ring-2 focus:ring-orange-500/20"
         />
       </div>
       <div className="mb-4 grid grid-cols-2 gap-3">
@@ -71,7 +71,7 @@ export function FormClient({ productId, productName }: { productId: string; prod
             type="text"
             value={form.role}
             onChange={e => setForm(f => ({ ...f, role: e.target.value }))}
-            className="w-full rounded-lg border border-gray-200 px-3 py-2 text-sm outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20"
+            className="w-full rounded-lg border border-stone-200 px-3 py-2 text-sm outline-none focus:border-orange-500 focus:ring-2 focus:ring-orange-500/20"
           />
         </div>
         <div>
@@ -81,7 +81,7 @@ export function FormClient({ productId, productName }: { productId: string; prod
             type="text"
             value={form.company}
             onChange={e => setForm(f => ({ ...f, company: e.target.value }))}
-            className="w-full rounded-lg border border-gray-200 px-3 py-2 text-sm outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20"
+            className="w-full rounded-lg border border-stone-200 px-3 py-2 text-sm outline-none focus:border-orange-500 focus:ring-2 focus:ring-orange-500/20"
           />
         </div>
       </div>
@@ -93,7 +93,7 @@ export function FormClient({ productId, productName }: { productId: string; prod
           value={form.avatar_url}
           onChange={e => setForm(f => ({ ...f, avatar_url: e.target.value }))}
           placeholder="https://..."
-          className="w-full rounded-lg border border-gray-200 px-3 py-2 text-sm outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20"
+          className="w-full rounded-lg border border-stone-200 px-3 py-2 text-sm outline-none focus:border-orange-500 focus:ring-2 focus:ring-orange-500/20"
         />
       </div>
       <div className="mb-6">
@@ -105,14 +105,14 @@ export function FormClient({ productId, productName }: { productId: string; prod
           required
           rows={4}
           maxLength={500}
-          className="w-full rounded-lg border border-gray-200 px-3 py-2 text-sm outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20"
+          className="w-full rounded-lg border border-stone-200 px-3 py-2 text-sm outline-none focus:border-orange-500 focus:ring-2 focus:ring-orange-500/20"
         />
-        <p className="mt-1 text-right text-xs text-gray-400">{form.text.length}/500</p>
+        <p className="mt-1 text-right text-xs text-slate-400">{form.text.length}/500</p>
       </div>
       <button
         type="submit"
         disabled={loading}
-        className="w-full rounded-lg bg-indigo-500 px-4 py-2 text-sm font-medium text-white hover:bg-indigo-600 disabled:opacity-50"
+        className="w-full rounded-lg bg-orange-500 px-4 py-2 text-sm font-medium text-white hover:bg-orange-600 disabled:opacity-50"
       >
         {loading ? 'Submitting...' : 'Submit Testimonial'}
       </button>

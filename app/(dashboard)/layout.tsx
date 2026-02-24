@@ -8,7 +8,7 @@ export default async function DashboardLayout({ children }: { children: React.Re
   if (!user) redirect('/login')
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-stone-50">
       <DashboardHeader email={user.email || ''} />
       <main className="mx-auto max-w-6xl px-4 py-8 sm:px-6">
         {children}
